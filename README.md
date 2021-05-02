@@ -60,12 +60,12 @@ Bạn có thể xem dữ liệu với show.
 
 ![image](https://user-images.githubusercontent.com/49860428/116810260-0777aa80-ab6d-11eb-8709-c645eed82112.png)
 
-## Select columns
+### Select columns
 Bạn có thể chọn và hiển thị các hàng có lựa chọn và tên của các đặc trưng. Dưới đây, age và fnlwgt được chọn.
 
 ![image](https://user-images.githubusercontent.com/49860428/116810335-71904f80-ab6d-11eb-96ac-f70bf401850d.png)
 
-## Count by group
+### Count by group
 Nếu bạn muốn đếm số lần xuất hiện theo nhóm, bạn có thể xâu chuỗi:
   - groupBy()
   - count()
@@ -74,7 +74,7 @@ Trong ví dụ PySpark bên dưới, bạn đếm số hàng theo education leve
 
 ![image](https://user-images.githubusercontent.com/49860428/116810357-8bca2d80-ab6d-11eb-9f0a-1424945712ac.png)
 
-## Describe the data
+### Describe the data
 Để nhận thống kê tóm tắt về dữ liệu, bạn có thể sử dụng description():
   - count
   - mean
@@ -88,12 +88,12 @@ Nếu bạn muốn thống kê tóm tắt chỉ của một cột, hãy thêm t�
 
 ![image](https://user-images.githubusercontent.com/49860428/116810390-b6b48180-ab6d-11eb-98fc-9c25d274403a.png)
 
-## Crosstab computation
+### Crosstab computation
 Trong một số trường hợp, có thể thú vị khi xem các thống kê mô tả giữa hai cột theo cặp. Ví dụ: bạn có thể đếm số người có thu nhập dưới hoặc trên 50k theo trình độ học vấn. Thao tác này được gọi là crosstab.
 
 ![image](https://user-images.githubusercontent.com/49860428/116810400-caf87e80-ab6d-11eb-9b72-6a6d3045bd28.png)
 
-## Drop column
+### Drop column
 Có hai API trực quan để drop columns:
   - drop(): Drop a column
   - dropna(): Drop NA’s
@@ -102,18 +102,49 @@ Bên dưới bạn drop column  education_num
 
 ![image](https://user-images.githubusercontent.com/49860428/116810423-efecf180-ab6d-11eb-8370-9894fdafdf2e.png)
 
-## Filter data
+### Filter data
 Bạn có thể sử dụng filter () để áp dụng thống kê mô tả trong một tập hợp con dữ liệu. Ví dụ: bạn có thể đếm số người trên 40 tuổi
 
 ![image](https://user-images.githubusercontent.com/49860428/116810438-0135fe00-ab6e-11eb-8b00-08928e449c5e.png)
 
-## Thống kê mô tả theo nhóm
+### Thống kê mô tả theo nhóm
 Cuối cùng, bạn có thể nhóm dữ liệu theo nhóm và tính toán các hoạt động thống kê như giá trị trung bình.
 
 ![image](https://user-images.githubusercontent.com/49860428/116810454-1579fb00-ab6e-11eb-88da-fc5e0d96197c.png)
 
+## Bước 2) Tiền xử lý dữ liệu
+Xử lý dữ liệu là một bước quan trọng trong học máy. Sau khi xóa dữ liệu rác, bạn sẽ có được một số thông tin chi tiết quan trọng.
 
+Ví dụ, bạn biết rằng tuổi không phải là một hàm tuyến tính với thu nhập. Khi còn trẻ, thu nhập của họ thường thấp hơn tuổi trung niên. Sau khi nghỉ hưu, một hộ gia đình sử dụng tiền tiết kiệm của họ, nghĩa là thu nhập giảm. Để chụp mẫu này, bạn có thể thêm square vào đặc trưng tuổi.
 
+### Add age square
+Để thêm một đặc trưng mới, bạn cần:
+  - Chọn cột
+  - Áp dụng phép biến đổi và thêm nó vào DataFrame
+
+![image](https://user-images.githubusercontent.com/49860428/116810529-6e499380-ab6e-11eb-859a-f75399b60cc6.png)
+
+Bạn có thể thấy rằng age_square đã được thêm thành công vào khung dữ liệu. Bạn có thể thay đổi thứ tự của các biến với select. Dưới đây, bạn mang theo age_square ngay sau tuổi.
+
+![image](https://user-images.githubusercontent.com/49860428/116810535-7c97af80-ab6e-11eb-9e4d-cc49b596a268.png)
+
+## Bước 3) Xây dựng pipeline xử lý dữ liệu
+
+Tương tự như scikit-learn, Pyspark có API pipeline.
+
+Một pipeline dẫn rất thuận tiện để duy trì cấu trúc của dữ liệu. Bạn đẩy dữ liệu vào pipeline. Bên trong pipeline, các hoạt động khác nhau được thực hiện, đầu ra được sử dụng để cung cấp cho thuật toán.
+
+Ví dụ: một phép biến đổi phổ quát trong học máy bao gồm chuyển đổi một chuỗi thành một one hot encoder, tức là một cột theo nhóm. One hot encoder thường là một ma trận đầy các số 0.
+
+Các bước để biến đổi dữ liệu rất giống với scikit-learn. Bạn cần phải:
+  - Lập index chuỗi thành số
+  - Tạo một bộ one hot encoder
+  - Chuyển đổi dữ liệu
+
+Hai API thực hiện công việc: StringIndexer, OneHotEncoder
+  1) Trước hết, bạn chọn cột chuỗi để lập chỉ mục. InputCol là tên của cột trong tập dữ liệu. OutputCol là tên mới được đặt cho cột được chuyển đổi.
+
+![image](https://user-images.githubusercontent.com/49860428/116810583-bf598780-ab6e-11eb-8f95-7f8d574012e5.png)
 
 
 
