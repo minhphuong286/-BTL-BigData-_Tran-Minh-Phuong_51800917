@@ -18,12 +18,15 @@
 # Spark Context
 SparkContext là công cụ bên trong cho phép kết nối với các clusters. Nếu bạn muốn chạy một hoạt động, bạn cần có SparkContext.
 ## Tạo một SparkContext
-  Trước hết, bạn cần khởi tạo SparkContext.
-![image](https://user-images.githubusercontent.com/49860428/116804834-392c4980-ab4c-11eb-9b3c-06bd9d0abece.png)
+ Trước hết, bạn cần khởi tạo SparkContext.
+ 
+ ![image](https://user-images.githubusercontent.com/49860428/116804834-392c4980-ab4c-11eb-9b3c-06bd9d0abece.png)
+Bây giờ SparkContext đã sẵn sàng, bạn có thể tạo một bộ sưu tập dữ liệu được gọi là RDD, Tập dữ liệu phân tán phục hồi (Resilient Distributed Dataset). Tính toán trong RDD được tự động song song trên toàn cluster.
 
-  Bây giờ SparkContext đã sẵn sàng, bạn có thể tạo một bộ sưu tập dữ liệu được gọi là RDD, Tập dữ liệu phân tán phục hồi (Resilient Distributed Dataset). Tính toán trong RDD được tự động song song trên toàn cluster.
 ![image](https://user-images.githubusercontent.com/49860428/116804862-7bee2180-ab4c-11eb-931d-cd61e687e744.png)
-  Bạn có thể truy cập hàng đầu tiên
+Bạn có thể truy cập hàng đầu tiên
+
 ![image](https://user-images.githubusercontent.com/49860428/116804897-cff90600-ab4c-11eb-9d97-3af906e8fb47.png)
-  Bạn có thể áp dụng một phép chuyển đổi cho dữ liệu bằng một hàm lambda. Trong ví dụ PySpark bên dưới, bạn trả về bình phương của nums. Đó là một sự chuyển đổi map.
+Bạn có thể áp dụng một phép chuyển đổi cho dữ liệu bằng một hàm lambda. Trong ví dụ PySpark bên dưới, bạn trả về bình phương của nums. Đó là một sự chuyển đổi map.
+
 ![image](https://user-images.githubusercontent.com/49860428/116804910-ed2dd480-ab4c-11eb-890a-cd7cd0833b3b.png)
