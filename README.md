@@ -20,6 +20,7 @@ SparkContext là công cụ bên trong cho phép kết nối với các clusters
 ## Tạo một SparkContext
   Trước hết, bạn cần khởi tạo SparkContext.
 ![image](https://user-images.githubusercontent.com/49860428/116804834-392c4980-ab4c-11eb-9b3c-06bd9d0abece.png)
+
   Bây giờ SparkContext đã sẵn sàng, bạn có thể tạo một bộ sưu tập dữ liệu được gọi là RDD, Tập dữ liệu phân tán phục hồi (Resilient Distributed Dataset). Tính toán trong RDD được tự động song song trên toàn cluster.
 ![image](https://user-images.githubusercontent.com/49860428/116804862-7bee2180-ab4c-11eb-931d-cd61e687e744.png)
   Bạn có thể truy cập hàng đầu tiên
