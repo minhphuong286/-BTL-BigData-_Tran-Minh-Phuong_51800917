@@ -42,7 +42,6 @@ Các bước để xây dựng một chương trình Học máy với PySpark:
   - Bước 3) Xây dựng pipeline xử lý dữ liệu
   - Bước 4) Xây dựng bộ phân loại: logistic
   - Bước 5) Đào tạo và đánh giá mô hình
-  - Bước 6) Điều chỉnh siêu tham số
 
 Khởi tạo SparkSession
 
@@ -146,8 +145,122 @@ Hai API thực hiện công việc: StringIndexer, OneHotEncoder
 
 ![image](https://user-images.githubusercontent.com/49860428/116810583-bf598780-ab6e-11eb-8f95-7f8d574012e5.png)
 
+  2) Điều chỉnh dữ liệu và biến đổi nó
 
+![image](https://user-images.githubusercontent.com/49860428/116810616-ef088f80-ab6e-11eb-861b-59cfb90b1e82.png)
 
+  4) Tạo các cột news dựa trên nhóm. Ví dụ: nếu có 10 nhóm trong đặc trưng, ma trận mới sẽ có 10 cột, mỗi nhóm một cột
 
+![image](https://user-images.githubusercontent.com/49860428/116810624-fc257e80-ab6e-11eb-85c0-cd9a3daa7c5c.png)
+
+### Xây dựng pipeline
+Bạn sẽ xây dựng một pipeline để chuyển đổi tất cả các đặc trưng chính xác và thêm chúng vào tập dữ liệu cuối cùng. Pipeline sẽ có bốn hoạt động, nhưng hãy thoải mái thêm bao nhiêu hoạt động tùy thích.
+
+  1) Encode dữ liệu phân loại
+  2) Lập Index label feature
+  3) Thêm biến liên tục
+  4) Tập hợp các bước.
+
+Mỗi bước được lưu trữ trong một danh sách có tên các giai đoạn. Danh sách này sẽ cho VectorAssembler biết thao tác nào cần thực hiện bên trong pipeline.
+
+### Mã hóa dữ liệu phân loại
+
+Bước này cũng giống như ví dụ trên, ngoại trừ việc bạn lặp lại tất cả các đặc trưng phân loại.
+
+![image](https://user-images.githubusercontent.com/49860428/116810662-4870be80-ab6f-11eb-85d9-258b1a398ee7.png)
+
+### Lập index label feature
+
+Spark, giống như nhiều thư viện khác, không chấp nhận các giá trị chuỗi cho nhãn. Bạn chuyển đổi đặc trưng nhãn với StringIndexer và thêm nó vào các giai đoạn danh sách.
+
+![image](https://user-images.githubusercontent.com/49860428/116810675-56beda80-ab6f-11eb-9312-5ef32865b951.png)
+
+### Thêm biến liên tục
+
+InputCols của VectorAssembler là một danh sách các cột. Bạn có thể tạo một danh sách mới chứa tất cả các cột mới.
+
+![image](https://user-images.githubusercontent.com/49860428/116810684-64746000-ab6f-11eb-996a-3bab3b063bc6.png)
+
+###Tập hợp các bước
+
+Cuối cùng, bạn vượt qua tất cả các bước trong VectorAssembler
+
+![image](https://user-images.githubusercontent.com/49860428/116810692-7229e580-ab6f-11eb-9def-c530150af03b.png)
+
+Bây giờ tất cả các bước đã sẵn sàng, bạn đẩy dữ liệu vào pipeline.
+
+![image](https://user-images.githubusercontent.com/49860428/116810704-7e15a780-ab6f-11eb-8bc0-2ab42ebc0c88.png)
+
+Nếu bạn kiểm tra tập dữ liệu mới, bạn có thể thấy rằng nó chứa tất cả các đặc trưng, được chuyển đổi và chưa được chuyển đổi. Bạn chỉ quan tâm đến nhãn mới và các đặc trưng.
+
+![image](https://user-images.githubusercontent.com/49860428/116810717-8ff74a80-ab6f-11eb-8d6c-dbf229d6587d.png)
+
+## Bước 4) Xây dựng bộ phân loại: logistic
+Để tính toán nhanh hơn, bạn chuyển đổi mô hình thành DataFrame.
+
+Bạn cần chọn nhãn mới và các đặc trưng từ mô hình bằng cách sử dụng map.
+
+![image](https://user-images.githubusercontent.com/49860428/116810729-9eddfd00-ab6f-11eb-8835-b56de21b1da6.png)
+
+ Tạo dữ liệu train dưới dạng DataFrame
+
+![image](https://user-images.githubusercontent.com/49860428/116810751-bf0dbc00-ab6f-11eb-8e84-489e343a4de4.png)
+
+Kiểm tra hàng thứ hai
+
+![image](https://user-images.githubusercontent.com/49860428/116810774-d8166d00-ab6f-11eb-95ab-8c94a0b58393.png)
+
+### Tạo train/test set
+
+Bạn chia tập dữ liệu 80/20 với randomSplit.
+
+![image](https://user-images.githubusercontent.com/49860428/116810791-f1b7b480-ab6f-11eb-9d8d-62c4dc033924.png)
+
+Hãy đếm xem có bao nhiêu người có thu nhập dưới / trên 50k trong cả tập huấn luyện và kiểm tra.
+
+![image](https://user-images.githubusercontent.com/49860428/116810802-fc724980-ab6f-11eb-8a39-dc3045443e5e.png)
+
+### Xây dựng bộ hồi quy logistic
+Cuối cùng nhưng không kém phần quan trọng, bạn có thể xây dựng bộ phân loại. Pyspark có một API gọi là LogisticRegression để thực hiện hồi quy logistic.
+
+Bạn khởi tạo lr bằng cách chỉ ra cột nhãn và các cột đặc trưng. Đặt tối đa 10 lần lặp và thêm thông số chính quy hóa với giá trị 0,3. Lưu ý rằng trong phần tiếp theo, bạn sẽ sử dụng xác thực chéo với lưới tham số để điều chỉnh mô hình.
+
+![image](https://user-images.githubusercontent.com/49860428/116810811-114edd00-ab70-11eb-8188-f7053d8445c1.png)
+
+## Bước 5) Đào tạo và đánh giá mô hình
+Để tạo dự đoán cho bộ thử Bạn cần phải xem chỉ số độ chính xác để xem mô hình hoạt động tốt (hoặc xấu) như thế nào.nghiệm của bạn. Bạn có thể sử dụng linearModel với transform() trên test_data.
+
+![image](https://user-images.githubusercontent.com/49860428/116810827-23c91680-ab70-11eb-8e6b-141435fa8eb7.png)
+
+Bạn có thể in các phần tử trong dự đoán
+
+![image](https://user-images.githubusercontent.com/49860428/116810851-3cd1c780-ab70-11eb-9308-d0ed562a0828.png)
+
+Bạn quan tâm đến nhãn, dự đoán và xác suất
+
+![image](https://user-images.githubusercontent.com/49860428/116810875-5bd05980-ab70-11eb-9004-7da286218f7c.png)
+
+### Đánh giá mô hình
+Bạn cần phải xem chỉ số độ chính xác để xem mô hình hoạt động tốt (hoặc xấu) như thế nào. Hiện tại, không có API nào để tính toán độ chính xác trong Spark. Giá trị mặc định là ROC (receiver operating characteristic curve).
+
+Trước khi bạn xem xét ROC, hãy xây dựng thước đo độ chính xác. Thước đo độ chính xác là tổng của dự đoán đúng trên tổng số quan sát.
+
+Bạn tạo một DataFrame với nhãn và dự đoán
+
+![image](https://user-images.githubusercontent.com/49860428/116810882-6e4a9300-ab70-11eb-8ad0-f6b5fd979721.png)
+
+Bạn có thể kiểm tra số lượng lớp trong nhãn và dự đoán
+
+![image](https://user-images.githubusercontent.com/49860428/116810893-7f939f80-ab70-11eb-911e-620bc94e296c.png)
+
+Ví dụ, trong tập thử nghiệm, có 1578 hộ gia đình có thu nhập trên 50k và 5021 hộ dưới. Tuy nhiên, phân loại dự đoán 617 hộ gia đình có thu nhập trên 50 nghìn.
+
+Bạn có thể tính độ chính xác bằng cách tính số lượng khi nhãn được phân loại chính xác trên tổng số hàng.
+
+![image](https://user-images.githubusercontent.com/49860428/116810909-92a66f80-ab70-11eb-8f19-6865668243ef.png)
+
+Bạn có thể kết hợp mọi thứ lại với nhau và viết một hàm để tính độ chính xác.
+
+![image](https://user-images.githubusercontent.com/49860428/116810925-a7830300-ab70-11eb-9bd9-4370e91467f4.png)
 
 
