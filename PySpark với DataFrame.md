@@ -33,6 +33,7 @@ Khởi tạo SparkSession
 ![image](https://user-images.githubusercontent.com/49860428/116810186-7c96b000-ab6c-11eb-9e99-0c8890c9f8ef.png)
 
 [Sử dụng tập dữ liệu adult dataset trên https://archive.ics.uci.edu/ml/datasets/Adult]
+
 Sau đó, đọc tệp cvs bằng spark.read.csv. Sử dụng  inferSchema được đặt thành True để yêu cầu Spark tự động đoán loại dữ liệu. Theo mặc định, nó chuyển thành False.
 
 ![image](https://user-images.githubusercontent.com/49860428/116810234-dbf4c000-ab6c-11eb-9f98-934f4eab68e0.png)
