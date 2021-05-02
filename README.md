@@ -36,3 +36,11 @@ SparkContext là công cụ bên trong cho phép kết nối với các clusters
 
   
 # Machine Learning với Pyspark
+Các bước để xây dựng một chương trình Học máy với PySpark:
+  - Bước 1) Hoạt động cơ bản với PySpark
+  - Bước 2) Tiền xử lý dữ liệu
+  - Bước 3) Xây dựng pipeline xử lý dữ liệu
+  - Bước 4) Xây dựng bộ phân loại: logistic
+  - Bước 5) Đào tạo và đánh giá mô hình
+  - Bước 6) Điều chỉnh siêu tham số
+
